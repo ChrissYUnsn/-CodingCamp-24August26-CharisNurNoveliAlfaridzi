@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Productivity Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="dashboard">
+
+    <!-- Clock & Greeting -->
+    <section class="card card--clock">
+      <div id="clock" class="clock__time">00:00:00</div>
+      <div id="date" class="clock__date"></div>
+      <div id="greeting" class="clock__greeting"></div>
+    </section>
+
+    <!-- Focus Timer -->
+    <section class="card card--timer">
+      <h2 class="card__title">Focus Timer</h2>
+      <div id="timer-display" class="timer__display">25:00</div>
+      <div class="timer__controls">
+        <button id="timer-start" class="btn btn--primary">Start</button>
+        <button id="timer-stop" class="btn btn--primary">Stop</button>
+        <button id="timer-reset" class="btn btn--primary">Reset</button>
+      </div>
+    </section>
+
+    <!-- Tasks -->
+    <section class="card card--tasks">
+      <h2 class="card__title">Tasks</h2>
+      <div class="tasks__input-row">
+        <input id="task-input" type="text" class="input" placeholder="Add a new task..." />
+        <button id="task-add" class="btn btn--primary">Add</button>
+      </div>
+      <ul id="task-list" class="task-list"></ul>
+    </section>
+
+    <!-- Quick Links -->
+    <section class="card card--links">
+      <h2 class="card__title">Quick Links</h2>
+      <div class="links__input-row">
+        <input id="link-name" type="text" class="input" placeholder="Link name" />
+        <input id="link-url" type="text" class="input" placeholder="URL" />
+        <button id="link-add" class="btn btn--primary">Add Link</button>
+      </div>
+      <div id="link-list" class="link-list"></div>
+    </section>
+
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

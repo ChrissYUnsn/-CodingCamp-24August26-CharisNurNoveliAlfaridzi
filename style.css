@@ -1,0 +1,379 @@
+/* ─── Design Tokens ────────────────────────────────────────────── */
+:root {
+  --color-brand:        #6c63d5;
+  --color-brand-dark:   #5a52c0;
+  --color-brand-light:  #ede9fe;
+  --color-danger:       #ef4444;
+  --color-danger-dark:  #dc2626;
+  --color-text-primary: #1e1b4b;
+  --color-text-body:    #374151;
+  --color-text-muted:   #6b7280;
+  --color-text-faint:   #9ca3af;
+  --color-border:       #e5e7eb;
+  --color-bg-card:      #ffffff;
+
+  --radius-card: 16px;
+  --radius-btn:  8px;
+  --radius-input: 8px;
+
+  --shadow-card:    0 2px 12px rgba(0, 0, 0, 0.08);
+  --shadow-card-lg: 0 6px 28px rgba(0, 0, 0, 0.13);
+
+  --transition-fast: 0.15s ease;
+}
+
+/* ─── Reset & Base ─────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #7c6fe0 0%, #6c63d5 40%, #a78bfa 100%);
+  /* Inter for consistent cross-platform rendering; system-ui as fallback */
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Dashboard Grid ───────────────────────────────────────────── */
+.dashboard {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 20px;
+  width: 100%;
+  max-width: 760px;
+}
+
+/* Clock spans full width on top */
+.card--clock {
+  grid-column: 1 / -1;
+}
+
+/* ─── Card ─────────────────────────────────────────────────────── */
+.card {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-card);
+  padding: 28px 32px;
+  box-shadow: var(--shadow-card);
+}
+
+/* Clock card is visually primary — stronger elevation */
+.card--clock {
+  box-shadow: var(--shadow-card-lg);
+}
+
+.card__title {
+  font-size: 0.8125rem;        /* 13px — compact label above content */
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 14px;
+}
+
+/* ─── Clock ────────────────────────────────────────────────────── */
+.card--clock {
+  text-align: center;
+  padding: 28px 32px 24px;
+}
+
+.clock__time {
+  font-size: 2.75rem;
+  font-weight: 600;
+  color: var(--color-brand);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  /* tabular-nums: keeps digits the same width so layout doesn't shift */
+  font-variant-numeric: tabular-nums;
+}
+
+.clock__date {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  margin-top: 6px;
+  font-weight: 400;
+}
+
+.clock__greeting {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-top: 8px;
+}
+
+/* ─── Focus Timer ──────────────────────────────────────────────── */
+.card--timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.timer__display {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--color-brand);
+  margin: 8px 0 24px;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.timer__controls {
+  display: flex;
+  gap: 10px;
+}
+
+/* ─── Tasks ────────────────────────────────────────────────────── */
+.tasks__input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.task-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+/* Empty state hint */
+.task-list:empty::after {
+  content: 'No tasks yet. Add one above.';
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--color-text-faint);
+  text-align: center;
+  padding: 14px 0;
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  transition: background var(--transition-fast);
+}
+
+.task-item:hover {
+  background: var(--color-brand-light);
+}
+
+.task-item__label {
+  flex: 1;
+  font-size: 0.9rem;
+  color: var(--color-text-body);
+  cursor: pointer;
+  word-break: break-word;
+  line-height: 1.4;
+}
+
+.task-item input[type="checkbox"]:checked + .task-item__label {
+  text-decoration: line-through;
+  color: var(--color-text-faint);
+}
+
+.task-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-brand);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ─── Focus Visible (keyboard nav) ────────────────────────────── */
+.btn:focus-visible,
+.input:focus-visible,
+.link-item:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+.btn:focus:not(:focus-visible),
+.input:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ─── Quick Links ──────────────────────────────────────────────── */
+.links__input-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.links__input-row .input {
+  flex: 1;
+  min-width: 90px;
+}
+
+.link-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.link-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-brand);
+  color: #fff;
+  border-radius: var(--radius-btn);
+  padding: 6px 14px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background var(--transition-fast),
+              box-shadow var(--transition-fast);
+}
+
+.link-item:hover {
+  background: var(--color-brand-dark);
+  box-shadow: 0 2px 8px rgba(108, 99, 213, 0.35);
+}
+
+.link-item__remove {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.65);
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  transition: color var(--transition-fast);
+}
+
+.link-item__remove:hover {
+  color: #fff;
+}
+
+/* ─── Shared Inputs ────────────────────────────────────────────── */
+.input {
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-input);
+  padding: 8px 12px;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: var(--color-text-body);
+  outline: none;
+  transition: border-color var(--transition-fast),
+              box-shadow var(--transition-fast);
+  background: #fff;
+  width: 100%;
+}
+
+.input:focus {
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 3px rgba(108, 99, 213, 0.15);
+}
+
+.input::placeholder {
+  color: var(--color-text-faint);
+}
+
+/* ─── Shake animation (invalid input feedback) ─────────────────── */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-6px); }
+  40%       { transform: translateX(6px); }
+  60%       { transform: translateX(-4px); }
+  80%       { transform: translateX(4px); }
+}
+
+.input--shake {
+  animation: shake 0.35s ease;
+  border-color: var(--color-danger) !important;
+  will-change: transform;
+}
+
+/* ─── Buttons ──────────────────────────────────────────────────── */
+.btn {
+  border: none;
+  border-radius: var(--radius-btn);
+  padding: 8px 18px;
+  font-size: 0.875rem;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition-fast),
+              box-shadow var(--transition-fast),
+              transform 0.1s ease;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn--primary {
+  background: var(--color-brand);
+  color: #fff;
+}
+
+.btn--primary:hover {
+  background: var(--color-brand-dark);
+  box-shadow: 0 2px 8px rgba(108, 99, 213, 0.35);
+}
+
+/* Danger button — muted by default, full red on hover for hierarchy */
+.btn--danger {
+  background: transparent;
+  color: var(--color-danger);
+  border: 1.5px solid var(--color-danger);
+  padding: 5px 11px;
+  font-size: 0.8rem;
+  opacity: 0.7;
+  transition: background var(--transition-fast),
+              color var(--transition-fast),
+              opacity var(--transition-fast);
+}
+
+.btn--danger:hover {
+  background: var(--color-danger);
+  color: #fff;
+  opacity: 1;
+}
+
+/* ─── Scrollbar ────────────────────────────────────────────────── */
+.task-list::-webkit-scrollbar {
+  width: 4px;
+}
+.task-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.task-list::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 4px;
+}
+
+/* ─── Responsive ───────────────────────────────────────────────── */
+@media (max-width: 560px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .card--clock {
+    grid-column: 1;
+  }
+
+  .links__input-row {
+    flex-direction: column;
+  }
+}

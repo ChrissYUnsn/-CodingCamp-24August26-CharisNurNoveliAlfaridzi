@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Productivity Dashboard",
+  "version": "1.0.0",
+  "description": "A personal productivity dashboard with clock, focus timer, tasks, and quick links.",
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "Productivity Dashboard"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "content_security_policy": {
+    "extension_pages": "default-src 'self'; style-src 'self'; script-src 'self'"
+  }
+}
