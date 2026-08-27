@@ -68,10 +68,11 @@ function updateClock() {
   }
 
   // Greeting — only write to DOM when it changes
+  const USER_NAME = 'Charis Nur Noveli Alfaridzi';
   const greet =
-    hour >= 5  && hour < 12 ? 'Good Morning'   :
-    hour >= 12 && hour < 17 ? 'Good Afternoon' :
-    hour >= 17 && hour < 21 ? 'Good Evening'   : 'Good Night';
+    hour >= 5  && hour < 12 ? `Good Morning, ${USER_NAME}`   :
+    hour >= 12 && hour < 17 ? `Good Afternoon, ${USER_NAME}` :
+    hour >= 17 && hour < 21 ? `Good Evening, ${USER_NAME}`   : `Good Night, ${USER_NAME}`;
   if (greet !== _lastGreet) {
     greetingEl.textContent = greet;
     _lastGreet = greet;
