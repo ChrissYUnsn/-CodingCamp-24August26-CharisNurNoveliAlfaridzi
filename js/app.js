@@ -2,10 +2,11 @@
    PRODUCTIVITY DASHBOARD — app.js
    Sections:
      0. Storage helper (cross-browser / extension safe)
-     1. Clock & Greeting
-     2. Focus Timer
-     3. Tasks
-     4. Quick Links
+     1. Theme Toggle (light / dark, persisted)
+     2. Clock & Greeting
+     3. Focus Timer
+     4. Tasks
+     5. Quick Links
 ───────────────────────────────────────────────────────────────── */
 
 /* ═══════════════════════════════════════════════════════════════
@@ -33,7 +34,49 @@ const storage = {
 };
 
 /* ═══════════════════════════════════════════════════════════════
-   1. CLOCK & GREETING
+   1. THEME TOGGLE
+═══════════════════════════════════════════════════════════════ */
+const themeToggleBtn   = document.getElementById('theme-toggle');
+const themeToggleIcon  = themeToggleBtn.querySelector('.theme-toggle__icon');
+const themeToggleLabel = themeToggleBtn.querySelector('.theme-toggle__label');
+
+// Apply a theme and update the button to reflect the opposite action
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  if (theme === 'dark') {
+    themeToggleIcon.textContent  = '☀️';
+    themeToggleLabel.textContent = 'Light';
+    themeToggleBtn.setAttribute('aria-label', 'Switch to light mode');
+  } else {
+    themeToggleIcon.textContent  = '🌙';
+    themeToggleLabel.textContent = 'Dark';
+    themeToggleBtn.setAttribute('aria-label', 'Switch to dark mode');
+  }
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'light';
+  const next    = current === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+  storage.set('theme', next);
+}
+
+// Load saved theme, falling back to the OS preference, then light
+(function initTheme() {
+  const saved = storage.get('theme', null);
+  if (saved) {
+    applyTheme(saved);
+  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    applyTheme('dark');
+  } else {
+    applyTheme('light');
+  }
+})();
+
+themeToggleBtn.addEventListener('click', toggleTheme);
+
+/* ═══════════════════════════════════════════════════════════════
+   2. CLOCK & GREETING
 ═══════════════════════════════════════════════════════════════ */
 const clockEl    = document.getElementById('clock');
 const dateEl     = document.getElementById('date');
@@ -84,7 +127,7 @@ setInterval(updateClock, 1000);
 
 
 /* ═══════════════════════════════════════════════════════════════
-   2. FOCUS TIMER
+   3. FOCUS TIMER
 ═══════════════════════════════════════════════════════════════ */
 const FOCUS_MINUTES  = 25;
 const timerDisplay   = document.getElementById('timer-display');
@@ -140,45 +183,86 @@ renderTimer();
 
 
 /* ═══════════════════════════════════════════════════════════════
-   3. TASKS
+   4. TASKS
 ═══════════════════════════════════════════════════════════════ */
-const taskInput = document.getElementById('task-input');
-const taskAddBtn = document.getElementById('task-add');
-const taskList  = document.getElementById('task-list');
+const taskInput       = document.getElementById('task-input');
+const taskCategoryEl  = document.getElementById('task-category');
+const taskAddBtn      = document.getElementById('task-add');
+const taskList        = document.getElementById('task-list');
+const filterBtns      = document.querySelectorAll('.btn--filter');
 
 // Load tasks from storage or use empty list
 let tasks = storage.get('tasks', []);
+// Active filter — resets to '' (All) on every page load per Req 3.4
+let activeFilter = '';
 
 function saveTasks() {
   storage.set('tasks', tasks);
 }
 
+// Map category string → CSS modifier class
+function tagClass(category) {
+  const map = { Work: 'work', Personal: 'personal', Study: 'study', Other: 'other' };
+  return map[category] || null;
+}
+
 function renderTasks() {
   taskList.innerHTML = '';
-  tasks.forEach((task, index) => {
+
+  const filtered = activeFilter
+    ? tasks.filter(t => t.category === activeFilter)
+    : tasks;
+
+  // Empty-state messaging (Req 6.3)
+  if (filtered.length === 0) {
+    const li = document.createElement('li');
+    li.className = 'task-empty';
+    li.textContent = activeFilter
+      ? `No tasks match the "${activeFilter}" filter.`
+      : 'No tasks yet. Add one above.';
+    taskList.appendChild(li);
+    return;
+  }
+
+  filtered.forEach((task) => {
+    // Use the real index in the full tasks array for mutations
+    const realIndex = tasks.indexOf(task);
+
     const li = document.createElement('li');
     li.className = 'task-item';
 
     const checkbox = document.createElement('input');
     checkbox.type    = 'checkbox';
     checkbox.checked = task.done;
-    checkbox.id      = `task-${index}`;
+    checkbox.id      = `task-${realIndex}`;
     checkbox.addEventListener('change', () => {
-      // Patch the data and only update this label's style —
-      // no full re-render needed for a simple toggle.
-      tasks[index].done = checkbox.checked;
+      tasks[realIndex].done = checkbox.checked;
       saveTasks();
       label.style.textDecoration = checkbox.checked ? 'line-through' : '';
-      label.style.color          = checkbox.checked ? '#9ca3af'      : '';
+      label.style.color          = checkbox.checked ? 'var(--color-text-faint)' : '';
     });
 
     const label = document.createElement('label');
-    label.className  = 'task-item__label';
-    label.htmlFor    = `task-${index}`;
+    label.className   = 'task-item__label';
+    label.htmlFor     = `task-${realIndex}`;
     label.textContent = task.text;
     if (task.done) {
       label.style.textDecoration = 'line-through';
-      label.style.color          = '#9ca3af';
+      label.style.color          = 'var(--color-text-faint)';
+    }
+
+    // Tag badge (only if category is set)
+    const cls = tagClass(task.category);
+    if (cls) {
+      const badge = document.createElement('span');
+      badge.className   = `task-tag task-tag--${cls}`;
+      badge.textContent = task.category;
+      li.appendChild(checkbox);
+      li.appendChild(label);
+      li.appendChild(badge);
+    } else {
+      li.appendChild(checkbox);
+      li.appendChild(label);
     }
 
     const deleteBtn = document.createElement('button');
@@ -186,13 +270,11 @@ function renderTasks() {
     deleteBtn.textContent = 'Delete';
     deleteBtn.setAttribute('aria-label', `Delete task: ${task.text}`);
     deleteBtn.addEventListener('click', () => {
-      tasks.splice(index, 1);
+      tasks.splice(realIndex, 1);
       saveTasks();
       renderTasks();
     });
 
-    li.appendChild(checkbox);
-    li.appendChild(label);
     li.appendChild(deleteBtn);
     taskList.appendChild(li);
   });
@@ -200,21 +282,31 @@ function renderTasks() {
 
 function shake(el) {
   el.classList.remove('input--shake');
-  // Force reflow so re-adding the class restarts the animation
   void el.offsetWidth;
   el.classList.add('input--shake');
   el.addEventListener('animationend', () => el.classList.remove('input--shake'), { once: true });
 }
 
 function addTask() {
-  const text = taskInput.value.trim();
+  const text     = taskInput.value.trim();
+  const category = taskCategoryEl.value;   // '' means no tag
   if (!text) { shake(taskInput); return; }
-  tasks.push({ text, done: false });
+  tasks.push({ text, done: false, category });
   saveTasks();
   renderTasks();
-  taskInput.value = '';
+  taskInput.value        = '';
+  taskCategoryEl.value   = '';
   taskInput.focus();
 }
+
+// Filter bar interaction
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    activeFilter = btn.dataset.filter;
+    filterBtns.forEach(b => b.classList.toggle('btn--filter-active', b === btn));
+    renderTasks();
+  });
+});
 
 taskAddBtn.addEventListener('click', addTask);
 taskInput.addEventListener('keydown', (e) => {
@@ -225,7 +317,7 @@ renderTasks();
 
 
 /* ═══════════════════════════════════════════════════════════════
-   4. QUICK LINKS
+   5. QUICK LINKS
 ═══════════════════════════════════════════════════════════════ */
 const linkNameInput = document.getElementById('link-name');
 const linkUrlInput  = document.getElementById('link-url');

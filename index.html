@@ -11,6 +11,11 @@
 </head>
 <body>
 
+  <button id="theme-toggle" class="theme-toggle" aria-label="Switch to dark mode">
+    <span class="theme-toggle__icon" aria-hidden="true">🌙</span>
+    <span class="theme-toggle__label">Dark</span>
+  </button>
+
   <div class="dashboard">
 
     <!-- Clock & Greeting -->  
@@ -36,7 +41,21 @@
       <h2 class="card__title">Tasks</h2>
       <div class="tasks__input-row">
         <input id="task-input" type="text" class="input" placeholder="Add a new task..." />
+        <select id="task-category" class="input tasks__category-select" aria-label="Task category">
+          <option value="">No tag</option>
+          <option value="Work">Work</option>
+          <option value="Personal">Personal</option>
+          <option value="Study">Study</option>
+          <option value="Other">Other</option>
+        </select>
         <button id="task-add" class="btn btn--primary">Add</button>
+      </div>
+      <div class="tasks__filter-bar" role="group" aria-label="Filter tasks by category">
+        <button class="btn btn--filter btn--filter-active" data-filter="">All</button>
+        <button class="btn btn--filter" data-filter="Work">Work</button>
+        <button class="btn btn--filter" data-filter="Personal">Personal</button>
+        <button class="btn btn--filter" data-filter="Study">Study</button>
+        <button class="btn btn--filter" data-filter="Other">Other</button>
       </div>
       <ul id="task-list" class="task-list"></ul>
     </section>

@@ -1,4 +1,4 @@
-/* ─── Design Tokens ────────────────────────────────────────────── */
+/* ─── Design Tokens — Light (default) ─────────────────────────── */
 :root {
   --color-brand:        #6c63d5;
   --color-brand-dark:   #5a52c0;
@@ -11,6 +11,8 @@
   --color-text-faint:   #9ca3af;
   --color-border:       #e5e7eb;
   --color-bg-card:      #ffffff;
+  --color-bg-body-from: #7c6fe0;
+  --color-bg-body-to:   #a78bfa;
 
   --radius-card: 16px;
   --radius-btn:  8px;
@@ -22,6 +24,26 @@
   --transition-fast: 0.15s ease;
 }
 
+/* ─── Design Tokens — Dark ─────────────────────────────────────── */
+[data-theme="dark"] {
+  --color-brand:        #9d95e8;
+  --color-brand-dark:   #8b83d6;
+  --color-brand-light:  #2d2a4a;
+  --color-danger:       #f87171;
+  --color-danger-dark:  #ef4444;
+  --color-text-primary: #e5e3f7;
+  --color-text-body:    #c4c2d8;
+  --color-text-muted:   #8b89a8;
+  --color-text-faint:   #5c5a72;
+  --color-border:       #3a3856;
+  --color-bg-card:      #1e1c2e;
+  --color-bg-body-from: #13121f;
+  --color-bg-body-to:   #1e1c2e;
+
+  --shadow-card:    0 2px 12px rgba(0, 0, 0, 0.35);
+  --shadow-card-lg: 0 6px 28px rgba(0, 0, 0, 0.5);
+}
+
 /* ─── Reset & Base ─────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -31,7 +53,7 @@
 
 body {
   min-height: 100vh;
-  background: linear-gradient(135deg, #7c6fe0 0%, #6c63d5 40%, #a78bfa 100%);
+  background: linear-gradient(135deg, var(--color-bg-body-from) 0%, #6c63d5 40%, var(--color-bg-body-to) 100%);
   /* Inter for consistent cross-platform rendering; system-ui as fallback */
   font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   font-size: 1rem;
@@ -43,6 +65,7 @@ body {
   padding: 24px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background 0.3s ease;
 }
 
 /* ─── Dashboard Grid ───────────────────────────────────────────── */
@@ -66,6 +89,7 @@ body {
   border-radius: var(--radius-card);
   padding: 28px 32px;
   box-shadow: var(--shadow-card);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* Clock card is visually primary — stronger elevation */
@@ -137,8 +161,85 @@ body {
 .tasks__input-row {
   display: flex;
   gap: 8px;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
+
+.tasks__category-select {
+  width: auto;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+/* ─── Filter Bar ───────────────────────────────────────────────── */
+.tasks__filter-bar {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.btn--filter {
+  background: transparent;
+  color: var(--color-text-muted);
+  border: 1.5px solid var(--color-border);
+  border-radius: 50px;
+  padding: 3px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition-fast),
+              color var(--transition-fast),
+              border-color var(--transition-fast);
+}
+
+.btn--filter:hover {
+  border-color: var(--color-brand);
+  color: var(--color-brand);
+}
+
+.btn--filter-active {
+  background: var(--color-brand);
+  color: #fff;
+  border-color: var(--color-brand);
+}
+
+.btn--filter-active:hover {
+  background: var(--color-brand-dark);
+  border-color: var(--color-brand-dark);
+  color: #fff;
+}
+
+.btn--filter:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+.btn--filter:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ─── Tag Badge ────────────────────────────────────────────────── */
+.task-tag {
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-radius: 50px;
+  padding: 1px 8px;
+  flex-shrink: 0;
+  line-height: 1.6;
+}
+
+.task-tag--work     { background: #dbeafe; color: #1d4ed8; }
+.task-tag--personal { background: #fce7f3; color: #be185d; }
+.task-tag--study    { background: #d1fae5; color: #065f46; }
+.task-tag--other    { background: var(--color-brand-light); color: var(--color-brand-dark); }
+
+[data-theme="dark"] .task-tag--work     { background: #1e3a5f; color: #93c5fd; }
+[data-theme="dark"] .task-tag--personal { background: #4a1942; color: #f9a8d4; }
+[data-theme="dark"] .task-tag--study    { background: #064e3b; color: #6ee7b7; }
+[data-theme="dark"] .task-tag--other    { background: var(--color-brand-light); color: var(--color-brand); }
 
 .task-list {
   list-style: none;
@@ -150,13 +251,14 @@ body {
 }
 
 /* Empty state hint */
-.task-list:empty::after {
-  content: 'No tasks yet. Add one above.';
+.task-list:empty::after,
+.task-empty {
   display: block;
   font-size: 0.8125rem;
   color: var(--color-text-faint);
   text-align: center;
   padding: 14px 0;
+  list-style: none;
 }
 
 .task-item {
@@ -351,6 +453,50 @@ body {
   opacity: 1;
 }
 
+/* ─── Theme Toggle Button ──────────────────────────────────────── */
+.theme-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 100;
+  background: var(--color-bg-card);
+  border: 1.5px solid var(--color-border);
+  border-radius: 50px;
+  padding: 6px 14px;
+  font-size: 0.8125rem;
+  font-family: inherit;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: var(--shadow-card);
+  transition: background 0.3s ease,
+              border-color var(--transition-fast),
+              color var(--transition-fast),
+              box-shadow var(--transition-fast);
+}
+
+.theme-toggle:hover {
+  border-color: var(--color-brand);
+  color: var(--color-brand);
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+}
+
+.theme-toggle:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.theme-toggle__icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
 /* ─── Scrollbar ────────────────────────────────────────────────── */
 .task-list::-webkit-scrollbar {
   width: 4px;
@@ -375,5 +521,13 @@ body {
 
   .links__input-row {
     flex-direction: column;
+  }
+
+  .tasks__input-row {
+    flex-wrap: wrap;
+  }
+
+  .tasks__category-select {
+    flex: 1 1 100%;
   }
 }
