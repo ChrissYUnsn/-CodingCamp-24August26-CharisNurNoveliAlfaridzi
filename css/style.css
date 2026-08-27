@@ -160,22 +160,22 @@ body {
 /* ─── Tasks ────────────────────────────────────────────────────── */
 .tasks__input-row {
   display: flex;
-  gap: 8px;
+  gap: 3px;
   margin-bottom: 10px;
 }
 
 .tasks__category-select {
-  width: auto;
-  flex-shrink: 0;
+  width: 100px;
+  flex-shrink: 10;
   cursor: pointer;
 }
 
 /* ─── Filter Bar ───────────────────────────────────────────────── */
 .tasks__filter-bar {
   display: flex;
-  gap: 6px;
+  gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 12px;
+  margin-bottom: 20px;
 }
 
 .btn--filter {
